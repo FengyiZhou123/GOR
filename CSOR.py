@@ -10,17 +10,26 @@ data = pd.read_csv('./data.csv')
 data = data.iloc[:, 1:]
 data = data.to_numpy()
 
+
 class Node:
     def __init__(self, node):
-        self.node=node
-        self.prev=None
+        self.node = node
+        self.prev = None
+
 
 class Query:
     def __init__(self, start, end):
-        self.start=Node(start)
-        self.end=Node(end)
-        self.routes=[]
-        self.timeList=[]
+        self.start = Node(start)
+        self.end = Node(end)
+        self.routes = []
+        self.timeList = []
+
+class Label:
+    def __init__(self, start_node, start_time, end_node, end_time):
+        self.start_node = start_node
+        self.start_time = start_time
+        self.start_node = start_node
+        self.start_node = start_node
 
 class PriorityQueue:
     def __init__(self):
@@ -37,6 +46,7 @@ class PriorityQueue:
     def get(self):
         return heapq.heappop(self.queue)[-1]  # pop out element with smallest priority
 
+
 def init_queries(query_num, graph_size):
     """
     init queries
@@ -45,11 +55,11 @@ def init_queries(query_num, graph_size):
     :return:
     """
 
-    queries=[]
+    queries = []
     for i in range(query_num):
         start = np.random.randint(0, graph_size)
         end = np.random.randint(0, graph_size)
-        if start==end:
+        if start == end:
             continue
         query = Query(start, end)
         queries.append(query)
@@ -57,15 +67,12 @@ def init_queries(query_num, graph_size):
     return queries
 
 
-
-
 def main():
     # init graph G
     G = pl.init_real_graph(data)
 
     # calculate the distances of different routes(all routes)
-    distances= dict(nx.all_pairs_dijkstra_path_length(G, weight="weight"))
-
+    distances = dict(nx.all_pairs_dijkstra_path_length(G, weight="weight"))
 
 
 def init_search(queries, G, distances):
@@ -75,10 +82,5 @@ def init_search(queries, G, distances):
 
         while not pq.empty():
             node = pq.get()
-            if node== query.end:
+            if node == query.end:
                 pass
-
-
-
-
-
