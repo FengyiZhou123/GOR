@@ -13,17 +13,17 @@ data = data.iloc[:, 1:]
 data = data.to_numpy()
 print(data.shape)
 print(data[0])
-tmp=[]
+tmp = []
 
 
 def init_real_graph(data):
     G = nx.Graph()
     for weight in data:
-        G.add_weighted_edges_from([(weight[0], weight[1], weight[2])])
+        G.add_edge(weight[0], weight[1], weight=weight[2])
         # if isinstance(weight[0], int) or isinstance(weight[1], int) or isinstance(weight[2], int):
         #     print('no')
         # else: print('yes')
-    G.add_weighted_edges_from([(0, 7388, 1.4108)])
+    G.add_edge(0, 7388, weight=1.4108)
     # print(len(G.edges))
     return G
 
@@ -52,7 +52,6 @@ class PriorityQueue:
         return heapq.heappop(self.queue)[-1]  # pop out element with smallest priority
 
 
-
 def init_labels(queries):
     labels = []
     for query in queries:
@@ -60,50 +59,50 @@ def init_labels(queries):
     return labels
 
 
-def init_small_world_graph(n, k, p):
-    """
-
-    :param n: n vertices
-    :param k: k neighbors
-    :param p: probability of rewiring
-    :return:
-    """
-    if k > n:
-        raise nx.NetworkXError("k>n, choose smaller k or larger n")
-
-    # If k == n, the graph is complete not Watts-Strogatz
-    if k == n:
-        return nx.complete_graph(n)
-
-    G = nx.DiGraph()
-    nodes = list(range(n))
-    weights = np.random.randint(1, 50, size=len(nodes))
-
-    # 和附近的点连起来
-    for j in range(1, k // 2 + 1):
-        targets = nodes[j:] + nodes[0:j]  # first j nodes are now last in list
-        G.add_weighted_edges_from(zip(nodes, targets, weights))
-        G.add_weighted_edges_from(zip(targets, nodes, weights))
-
-    for j in range(1, k // 2 + 1):  # outer loop is neighbors
-        targets = nodes[j:] + nodes[0:j]  # first j nodes are now last in list
-        # inner loop in node order
-        for u, v in zip(nodes, targets):
-            if np.random.rand() < p:
-                w = np.random.randint(0, 100)
-                # Enforce no self-loops or multiple edges
-                while w == u or G.has_edge(u, w):
-                    w = np.random.randint(0, 100)
-                    if G.degree(u) >= n - 1:
-                        break  # skip this rewiring
-                else:
-                    weight = np.random.randint(1, 50)
-                    G.remove_edge(u, v)
-                    G.remove_edge(v, u)
-                    G.add_weighted_edges_from([(u, w, weight)])
-                    G.add_weighted_edges_from([(w, u, weight)])
-
-    return G
+# def init_small_world_graph(n, k, p):
+#     """
+#
+#     :param n: n vertices
+#     :param k: k neighbors
+#     :param p: probability of rewiring
+#     :return:
+#     """
+#     if k > n:
+#         raise nx.NetworkXError("k>n, choose smaller k or larger n")
+#
+#     # If k == n, the graph is complete not Watts-Strogatz
+#     if k == n:
+#         return nx.complete_graph(n)
+#
+#     G = nx.DiGraph()
+#     nodes = list(range(n))
+#     weights = np.random.randint(1, 50, size=len(nodes))
+#
+#     # 和附近的点连起来
+#     for j in range(1, k // 2 + 1):
+#         targets = nodes[j:] + nodes[0:j]  # first j nodes are now last in list
+#         G.add_weighted_edges_from(zip(nodes, targets, weights))
+#         G.add_weighted_edges_from(zip(targets, nodes, weights))
+#
+#     for j in range(1, k // 2 + 1):  # outer loop is neighbors
+#         targets = nodes[j:] + nodes[0:j]  # first j nodes are now last in list
+#         # inner loop in node order
+#         for u, v in zip(nodes, targets):
+#             if np.random.rand() < p:
+#                 w = np.random.randint(0, 100)
+#                 # Enforce no self-loops or multiple edges
+#                 while w == u or G.has_edge(u, w):
+#                     w = np.random.randint(0, 100)
+#                     if G.degree(u) >= n - 1:
+#                         break  # skip this rewiring
+#                 else:
+#                     weight = np.random.randint(1, 50)
+#                     G.remove_edge(u, v)
+#                     G.remove_edge(v, u)
+#                     G.add_weighted_edges_from([(u, w, weight)])
+#                     G.add_weighted_edges_from([(w, u, weight)])
+#
+#     return G
 
 
 def init_queries(query_num, graph_size):
@@ -219,13 +218,13 @@ def greedy_algorithm(labels, G, G_carNum, alpa, gen):
         # print("test1")
         # print(label_q.routes[-1])
         # print("test2")
-        nodes=list(G.neighbors(label_q.routes[-1]))
+        nodes = list(G.neighbors(label_q.routes[-1]))
         # print(nodes)
-        costs=[]
-        neighbor_nodes=[]
+        costs = []
+        neighbor_nodes = []
         for node in nodes:
-                # print(nodes)
-                # print("in routes"+str(node))
+            # print(nodes)
+            # print("in routes"+str(node))
             if node not in label_q.routes and gen[node][label_q.end] < gen[label_q.routes[-1]][label_q.end]:
                 # print(node)
                 # print("test5")
@@ -240,30 +239,33 @@ def greedy_algorithm(labels, G, G_carNum, alpa, gen):
                     # print("test3")
                 car_num = get_car_num(qp, label_q, node)
                 EGT_tmp = label_q.timeList[-1] + gen[node][label_q.end] + weight * (1 + alpa * car_num)
-                    # print(EGT)
-                    # print("EGT test")
+                # print(EGT)
+                # print("EGT test")
                 neighbor_nodes.append(node)
                 costs.append(EGT_tmp)
 
         if costs:
-            min_cost=sys.maxsize
-            min_index=-1
+            min_cost = sys.maxsize
+            min_index = -1
             for i in range(len(costs)):
-                if costs[i]<min_cost:
-                    min_cost=costs[i]
-                    min_index=i
+                if costs[i] < min_cost:
+                    min_cost = costs[i]
+                    min_index = i
 
-            node=neighbor_nodes[min_index]
-            label_q.timeList.append(min_cost-gen[node][label_q.end])
+            node = neighbor_nodes[min_index]
+            label_q.timeList.append(min_cost - gen[node][label_q.end])
             label_q.routes.append(node)
-            start=int(label_q.routes[-2])
-            end=int(node)
+            start = int(label_q.routes[-2])
+            end = int(node)
             G_carNum[start][end] = int(car_num) + 1
 
-
+            i = 0
             if label_q.routes[-1] == label_q.end:
-                print(len(label_q.routes))
-                print(label_q.routes)
+
+                if i < 5:
+                    print(len(label_q.routes))
+                    print(label_q.routes)
+                    i += 1
                 tmp.append(len(label_q.routes))
                 res.append(label_q)
             else:
@@ -346,7 +348,7 @@ def get_add(i, label_tmp, G, G_carNum, alpa):
 
     start, end = int(label_tmp.routes[i]), int(label_tmp.routes[i + 1])
     for node in G.nodes:
-        node=int(node)
+        node = int(node)
         if G.has_edge(start, node) and G.has_edge(node, end):
             weight1 = G.get_edge_data(start, node)["weight"]
             weight2 = G.get_edge_data(node, end)["weight"]
@@ -390,7 +392,7 @@ def get_change(i, label_tmp, G, G_carNum, alpa):
     # print(end)
     # print("endtest")
     for node in G.nodes:
-        node=int(node)
+        node = int(node)
         if not node == start and not node == end and G.has_edge(start, node) and G.has_edge(node, end):
             weight1 = G.get_edge_data(start, node)["weight"]
             weight2 = G.get_edge_data(node, end)["weight"]
@@ -406,10 +408,10 @@ def get_change(i, label_tmp, G, G_carNum, alpa):
 def get_car_num(qp, label_q, node):
     res = 0
     start, end = label_q.routes[-1], node
-    time=label_q.timeList[-1]
+    time = label_q.timeList[-1]
     for label in qp.queue:
         if len(label[-1].routes) >= 2 and label[-1].routes[-1] == end and label[-1].routes[-2] == start \
-                and time<=label[-1].timeList[-1] and time>=label[-1].timeList[-2]:
+                and label[-1].timeList[-1] >= time >= label[-1].timeList[-2]:
             res += 1
     return res
 
@@ -431,8 +433,11 @@ def planning():
     rate = 0.02
     alpa = 0.02
     G = init_real_graph(data)
+    print(nx.is_connected(G))
+    print(nx.average_shortest_path_length(G))
+    print("=======================================================")
     # G=init_small_world_graph(10000,10,0.2)
-    G_carNum = np.zeros((graph_size+1, graph_size+1), dtype=int)
+    G_carNum = np.zeros((graph_size + 1, graph_size + 1), dtype=int)
     # print(dict(G_weight))
     q = init_queries(query_num=2000, graph_size=graph_size)
     labels = init_labels(q)
@@ -443,7 +448,6 @@ def planning():
     gen = dict(nx.all_pairs_dijkstra_path_length(G, weight="weight"))
     end1 = datetime.datetime.now()
     print((end1 - start1).seconds)
-
 
     # f = open('data_dijkstra.txt', 'r')
     # a = f.read()
@@ -462,7 +466,6 @@ def planning():
     print((end - start).seconds)
     total_time1 = show_answer(combination_1)
     print(total_time1)
-
 
     start3 = datetime.datetime.now()
     print(start3)

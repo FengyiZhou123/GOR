@@ -2,18 +2,19 @@ import networkx as nx
 import real_time as rt
 import numpy as np
 import heapq
+from GOR_new import init_real_graph
 
 import datetime
 
-g_data = [(1, 2, 6), (1, 3, 1), (1, 4, 5),
-          (2, 3, 5),  (2, 5, 3),
-          (3, 4, 5), (3, 5, 6), (3, 6, 4), (4, 6, 2),
-          (5, 6, 6)]
-
-G = nx.Graph()
-G.add_weighted_edges_from(g_data)
-routes=rt.KSP(G,1,6,4)
-print(routes)
+# g_data = [(1, 2, 6), (1, 3, 1), (1, 4, 5),
+#           (2, 3, 5),  (2, 5, 3),
+#           (3, 4, 5), (3, 5, 6), (3, 6, 4), (4, 6, 2),
+#           (5, 6, 6)]
+#
+# G = nx.Graph()
+# G.add_weighted_edges_from(g_data)
+# routes=rt.KSP(G,1,6,4)
+# print(routes)
 # gen = dict(nx.all_pairs_dijkstra_path_length(G,weight="weight"))
 # print(gen[1])
 # print(gen[1][1])
@@ -52,6 +53,8 @@ print(routes)
 # pq=PriorityQueue()
 # pq.put(1,1)
 # pq.put(2,2)
+# pq.put(3,-1)
+# print(pq.get())
 # print(pq.get())
 # print(pq.get())
 
@@ -64,8 +67,18 @@ print(routes)
 # print(list)
 # list.append(4)
 # print(list)
-list=[]
-if list:
-    print(1)
+
+G= init_real_graph()
+print(nx.is_strongly_connected(G))
+print(len(G.nodes))
+
+class node:
+    def __init__(self, start):
+        self.start=start
+        self.routes=[]
+
+node = node(1)
+node.
+
 
 
