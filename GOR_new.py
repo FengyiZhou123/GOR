@@ -5,6 +5,9 @@ import sys
 import networkx as nx
 import numpy as np
 import pandas as pd
+import pickle
+import json
+import joblib
 
 
 def init_real_graph():
@@ -100,6 +103,7 @@ def greedy_algorithms(labels, G, distances, alpha, edge_dict):
         end_node = 0
         time_start = datetime.datetime.now()
         for node in nodes:
+            # if distances.get(node) is not None and distances.get(init_node) is not None:
             if node not in label.routes and distances[node][label.end] < distances[init_node][label.end]:
 
                 car_start_time = datetime.datetime.now()
@@ -128,8 +132,8 @@ def greedy_algorithms(labels, G, distances, alpha, edge_dict):
         if end_node != 0 and end_time != 0:
             if (init_node, end_node) in edge_dict:
                 edge_dict[(init_node, end_node)].append([init_time, end_time])
-            else :
-                edge_dict[(init_node, end_node)]=[[init_time, end_time]]
+            else:
+                edge_dict[(init_node, end_node)] = [[init_time, end_time]]
 
         if label.routes[-1] == label.end:
             res.append(label)
@@ -143,6 +147,19 @@ def refining_algorithm(combination, G, distances, rate):
     pass
 
 
+# def save_dict(filename, dic):
+#     """save dict into json file"""
+#     with open(filename, 'w') as json_file:
+#         json.dump(dic, json_file, ensure_ascii=False)
+#
+#
+# def load_dict(filename):
+#     """load dict from json file"""
+#     with open(filename, "r") as json_file:
+#         dic = json.load(json_file)
+#     return dic
+
+
 def main():
     # 先设置场数，例如query_num等, graph_num=18262, 真实图中的点为18262
     query_num = 2000
@@ -152,6 +169,19 @@ def main():
 
     G = init_real_graph()
     distances = dict(nx.all_pairs_dijkstra_path_length(G, weight="weight"))
+    with open('distances.pkl', 'wb') as f:
+        joblib.dump(distances, f, pickle.HIGHEST_PROTOCOL)
+
+    start = datetime.datetime.now()
+    with open('distances.pkl', 'rb') as f:
+        distances = pickle.load(f)
+        print(type(distances))
+
+    end = datetime.datetime.now()
+    print((end - start).seconds)
+    # # save_dict('distances', distances)
+    # distances = load_dict('distances')
+
     labels = init_labels(query_num=query_num, graph_size=graph_size)
 
     edge_dict = {}

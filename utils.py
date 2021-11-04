@@ -2,6 +2,7 @@ from heapq import heappush, heappop
 from itertools import count
 import copy as cp
 import networkx as nx
+import numpy as np
 import pandas as pd
 
 
@@ -46,6 +47,7 @@ def k_shortest_paths(G, source, target, k=1, weight='weight'):
 
     return A, A_len
 
+
 def init_real_graph():
     data = pd.read_csv('./data.csv')
     data = data.iloc[:, 1:]
@@ -56,3 +58,15 @@ def init_real_graph():
     G.add_edge(0, 7388, weight=1.4108)
 
     return G
+
+
+def init_queries(query_num, graph_size):
+    queries = []
+    for i in range(query_num):
+        start = np.random.randint(0, graph_size)
+        end = np.random.randint(0, graph_size)
+        if start == end:
+            continue
+        queries.append((start, end))
+
+    return queries

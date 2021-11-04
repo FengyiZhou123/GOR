@@ -1,24 +1,40 @@
+import os
+
 import networkx as nx
 import utils
 import real_time as rt
 import numpy as np
 import heapq
 from GOR_new import init_real_graph, PriorityQueue
+import json
 
 import datetime
 
-g_data = [(1, 2, 6), (1, 3, 1), (1, 4, 5),
-          (2, 3, 5),  (2, 5, 3),
-          (3, 4, 5), (3, 5, 6), (3, 6, 4), (4, 6, 2),
-          (5, 6, 6)]
+# g_data = [(1, 2, 6), (1, 3, 1), (1, 4, 5),
+#           (2, 3, 5),  (2, 5, 3),
+#           (3, 4, 5), (3, 5, 6), (3, 6, 4), (4, 6, 2),
+#           (5, 6, 6)]
+#
+# G = nx.Graph()
+# G.add_weighted_edges_from(g_data)
+# (A, A_len) = utils.k_shortest_paths(G, source=1, target=4, k=10, weight='weight')
+# print(type(A))
+# print(type(A_len))
+# for route in (A, A_len):
+#     print(type(route))
+#     print(route)
 
-G = nx.Graph()
-G.add_weighted_edges_from(g_data)
-(A, A_len) = utils.k_shortest_paths(G, source=1, target=4, k=10, weight='weight')
-for route in (A, A_len):
-    print(route)
+print(os.path.abspath('../github/Max_Sum_Python/maxsum/'))
+# with open('新建文本文档.txt', 'r') as f:
+#     tmp = f.read();
+#     print(type(tmp))
 
-
+set = dict()
+set[1] = [1,2]
+set[2] = [3,2]
+set[3] = [2,2]
+for a in set:
+    print(a)
 
 
 # routes=rt.KSP(G,1,6,4)
@@ -98,12 +114,15 @@ for route in (A, A_len):
 # i+=(time2-time1).microseconds
 # print(i)
 
-dict={}
-
-dict[(1,2)] = [[2, 3]]
-dict[(1,2)].append([1,2])
-dict.get((1,2))
-for i in dict[(1,2)]:
-    print(i[0])
+# dict = {}
+# dict['1']='zzzz'
+# dict['2']='aaa'
+# with open('zzz.json', 'w') as f:
+#     f.write(json.dumps(dict))
+#
+# with open('zzz.json', 'r') as f:
+#     tmp = json.loads(f.read())
+#     print(tmp)
+#     print(type(tmp))
 
 
